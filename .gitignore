@@ -10,6 +10,7 @@ npm-debug.log
 /vendor
 /node_modules
 /.idea
+/public/dist
 /public/storage
 /storage/laravels.pid
 /storage/laravels.json

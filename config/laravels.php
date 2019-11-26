@@ -9,7 +9,7 @@ return [
     'socket_type'              => defined('SWOOLE_SOCK_TCP') ? SWOOLE_SOCK_TCP : 1,
     'enable_coroutine_runtime' => false,
     'server'                   => env('LARAVELS_SERVER', 'LaravelS'),
-    'handle_static'            => env('LARAVELS_HANDLE_STATIC', false),
+    'handle_static'            => env('LARAVELS_HANDLE_STATIC', false),	// 如果还没代理到 nginx 需开启这个选项才能找到静态文件
     'laravel_base_path'        => env('LARAVEL_BASE_PATH', base_path()),
     'inotify_reload'           => [
         'enable'        => env('LARAVELS_INOTIFY_RELOAD', false),

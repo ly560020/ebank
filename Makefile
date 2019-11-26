@@ -1,7 +1,7 @@
 .PHONY: dependency-install file-permission
 
 dependency: dependency-install file-permission
-install: app-install dump-autoload
+install: npm-install app-install dump-autoload
 
 help:
 	@echo 'make install -- download dependencies and install'

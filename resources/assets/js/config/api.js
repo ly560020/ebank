@@ -51,7 +51,7 @@ axios.interceptors.response.use(function (response){
 	Vue.prototype.loading(true);
 	if(errors.response.status === 401){
 		// 不是未登录错误，就提示出来
-		errors.response.data.message === 'Unauthenticated.' || Vue.prototype.tips(errors.response.data.message);
+		// errors.response.data.message === 'Unauthenticated.' || Vue.prototype.tips(errors.response.data.message);
 		// 存入验证前的网页，登录/注册后再跳回来
 		localStorage.setItem('admin_auth_jump', location.hash.substr(1));
 		

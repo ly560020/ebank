@@ -124,8 +124,9 @@ CREATE SCHEMA `ebank` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 3. CREATE SCHEMA `ebank` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 // 编辑 .env 文件配置数据库、redis、SMTP 等，然后再继续执行以下命令
-4. composer install
-5. php artisan app:install
+4. npm install && npm run prod
+5. composer install
+6. php artisan app:install
 ```
 
 

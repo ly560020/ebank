@@ -7,7 +7,7 @@
 					<div class="mdui-textfield mdui-textfield-floating-label">
 						<i class="mdui-icon material-icons">account_circle</i>
 						<label class="mdui-textfield-label">登录名</label>
-						<input class="mdui-textfield-input" type="text" id="name" v-model="form.name" />
+						<input class="mdui-textfield-input" type="text" id="name" autocomplete="off" v-model="form.name" />
 					</div>
 					<div class="mdui-textfield mdui-textfield-floating-label">
 						<i class="mdui-icon material-icons">lock</i>
