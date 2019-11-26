@@ -15,14 +15,26 @@ class OrderNotify implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $order_no = '';
+    
+    // 依次等待时间，模仿三方支付异步通知等待模式
+    protected $delays = [
+    	0, 3, 5, 10, 30
+	];
+    protected $times = 0;
+    
     /**
      * Create a new job instance.
      *
+	 * @param string $order_no 订单号
+	 * @param int $times 第几次执行了
      * @return void
      */
-    public function __construct($order_no)
+    public function __construct($order_no, int $times = 0)
     {
 		$this->order_no = $order_no;
+		$this->times = $times;
+		$delay = $this->delays[$times];
+		$this->delay($delay);
     }
 
     /**
@@ -58,6 +70,11 @@ class OrderNotify implements ShouldQueue
 	
 	
 	public function failed(\Exception $exception){
-		email_bug($this->order_no.'订单异步通知到商户失败，请通知商户及时处理程序错误',$exception->__toString());
+    	// 到达了最后的等待时间点，才触发
+    	if($this->times < count($this->delays) - 1){
+			OrderNotify::dispatch($this->order_no, $this->times + 1);
+		}else{
+			email_bug($this->order_no.'订单异步通知到商户失败，请通知商户及时处理程序错误',$exception->__toString());
+		}
 	}
 }

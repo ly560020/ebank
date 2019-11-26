@@ -34,7 +34,10 @@
 			</blockquote>
 			<blockquote class="blockquote_normal">
 				有效转账记录统计，不包括冲正(分)
-				<p style="line-height:25px;"><span class="mdui-m-r-3">收入：{{amount_into}}</span><span class="mdui-m-r-3">支出：{{amount_out}}</span></p>
+				<p style="line-height:25px;">
+					<span class="mdui-m-r-3 mdui-text-color-deep-orange">出账：{{amount_out}}</span>
+					<span class="mdui-m-r-3 mdui-text-color-teal">进账：{{amount_into}}</span>
+				</p>
 			</blockquote>
 		</div>
 		<div class="mdui-tab" mdui-tab>

@@ -13,7 +13,7 @@ let token = document.head.querySelector('meta[name="csrf-token"]');
 axios.defaults.headers.common['X-CSRF-TOKEN'] = token.content;
 axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-const url_prefix = APP_URL + "/admin";
+const url_prefix = "/admin";
 
 /**
  * 请求拦截
@@ -38,9 +38,6 @@ axios.interceptors.response.use(function (response){
 		}else if('0' === data.status){
 			Vue.prototype.tips(data.message);
 			return Promise.reject(data.message);
-		}else if('2' === data.status){
-			router.push({path:'/login'});
-			return Promise.reject('Need Login');
 		}else{
 			Vue.prototype.tips('失败，未正常接收 json');
 			return Promise.reject('失败，未正常接收 json');
@@ -52,13 +49,30 @@ axios.interceptors.response.use(function (response){
 	}
 }, function (errors){
 	Vue.prototype.loading(true);
-	let message = "网络请求失败";
+	if(errors.response.status === 401){
+		// 不是未登录错误，就提示出来
+		errors.response.data.message === 'Unauthenticated.' || Vue.prototype.tips(errors.response.data.message);
+		// 存入验证前的网页，登录/注册后再跳回来
+		localStorage.setItem('admin_auth_jump', location.hash.substr(1));
+		
+		router.push({path:'/login'});
+		return Promise.reject(errors.response.data.message);
+	}
+	if(errors.response.status === 422){
+		Vue.prototype.tips(errors.response.data.message, 'error');
+		return Promise.reject(errors.response.data.message);
+	}
+	if(errors.response.status === 404){
+		Vue.prototype.tips('404 Not Found', 'error');
+		return Promise.reject('404 Not Found');
+	}
+	let message = "Network error";
 	if (errors.response) {
 		message = errors.response.data.message;
 	}else if (errors.request){
-		message = "程序发起请求失败";
+		message = "Request error";
 	}
-	Vue.prototype.tips(message);
+	Vue.prototype.tips(message, 'warning');
 	return Promise.reject(message);
 });
 

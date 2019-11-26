@@ -296,11 +296,19 @@ class EBank {
 		])->validate();
 		
 		$transfer_id = DB::transaction(function() use ($merchant_id,$out_purse_id,$into_purse_id,$amount,$parent_id,$reason,$detail,$remarks){
-			// 悲观行锁，避免其他进程幻读
-//			$out_purse = FundUserPurse::lockForUpdate()->find($out_purse_id);
-			$out_purse = FundUserPurse::find($out_purse_id);
-//			$into_purse = FundUserPurse::lockForUpdate()->find($into_purse_id);
-			$into_purse = FundUserPurse::find($into_purse_id);
+			// 2019-11-26 14:48:39 修改为原子锁，避免幻读
+			$out_purse = Cache::lock('EBank_transfer')->block(10, function() use ($out_purse_id){
+				return FundUserPurse::find($out_purse_id);
+			});
+			if(empty($out_purse)){
+				exception('转出钱包查询超时');
+			}
+			$into_purse = Cache::lock('EBank_transfer')->block(10, function() use ($into_purse_id){
+				return FundUserPurse::find($into_purse_id);
+			});
+			if(empty($into_purse)){
+				exception('转入钱包查询超时');
+			}
 			
 			if($out_purse->status == 0){
 				exception('转出钱包已被设置为禁用');

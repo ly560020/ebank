@@ -82,10 +82,17 @@ return [
 			],
 			'supervisor-2' => [
 				'connection' => 'redis',
-				'queue' => ['order_notify', 'transfer'],
+				'queue' => ['transfer'],
 				'balance' => 'false',
-				'processes' => 15,
+				'processes' => 8,
 				'tries' => 3,
+			],
+			'supervisor-3' => [
+				'connection' => 'redis',
+				'queue' => ['order_notify'],
+				'balance' => 'false',
+				'processes' => 8,
+				'tries' => 1,
 			],
 		],
 		
@@ -100,10 +107,17 @@ return [
 			],
 			'supervisor-2' => [
 				'connection' => 'redis',
-				'queue' => ['order_notify', 'transfer'],
+				'queue' => ['transfer'],
 				'balance' => 'false',
 				'processes' => 5,
 				'tries' => 3,
+			],
+			'supervisor-3' => [
+				'connection' => 'redis',
+				'queue' => ['order_notify'],
+				'balance' => 'false',
+				'processes' => 5,
+				'tries' => 1,
 			],
 		],
 		
@@ -118,10 +132,17 @@ return [
 			],
 			'supervisor-2' => [
 				'connection' => 'redis',
-				'queue' => ['order_notify', 'transfer'],
+				'queue' => ['transfer'],
 				'balance' => 'false',
 				'processes' => 2,
 				'tries' => 3,
+			],
+			'supervisor-3' => [
+				'connection' => 'redis',
+				'queue' => ['order_notify'],
+				'balance' => 'false',
+				'processes' => 2,
+				'tries' => 1,
 			],
 		],
 	],

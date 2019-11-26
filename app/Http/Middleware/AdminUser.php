@@ -22,7 +22,7 @@ class AdminUser
     	$uid = session('admin_uid');
     	if(!$uid){
     		if($request->ajax()){
-				throw new LoginException('登录状态失效');
+				abort(401, '登录状态失效');
 			}else{
 				return redirect(url('admin'));
 			}
