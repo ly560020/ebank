@@ -21,8 +21,8 @@
 	var PROJECT_NAME = "{{$project_name}}";
 	var GITHUB_SHOW = parseInt("{{$github_show}}");
 </script>
-<script src="{{mix('js/manifest.js', '/dist')}}"></script>
-<script src="{{mix('js/vendor.js', '/dist')}}"></script>
+{{--<script src="{{mix('js/manifest.js', '/dist')}}"></script>--}}
+{{--<script src="{{mix('js/vendor.js', '/dist')}}"></script>--}}
 <script src="{{mix('js/app.js', '/dist')}}"></script>
 </body>
 </html>

@@ -20,10 +20,10 @@ class OrderController extends CommonController {
 		$data['payment'] = FundOrderPayment::groupBy('type')->pluck('type','id');
 		$model = FundOrder::select(DB::raw('fund_order.*'))->rightJoin('fund_order_payment as payment','payment.order_id','=','fund_order.id')
 			->when($request->input('user_id'),function($query) use ($request){
-				$query->where('user_id','like',$request->input('user_id'));
+				$query->where('user_id',$request->input('user_id'));
 			})
 			->when($request->input('order_no'),function($query) use ($request){
-				$query->where('order_no','like',$request->input('order_no'));
+				$query->where('order_no',$request->input('order_no'));
 			})
 			->when($request->input('merchant_id'),function($query) use ($request){
 				$query->whereIn('merchant_id',$request->input('merchant_id'));

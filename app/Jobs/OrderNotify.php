@@ -70,7 +70,7 @@ class OrderNotify implements ShouldQueue
 	
 	
 	public function failed(\Exception $exception){
-    	// 到达了最后的等待时间点，才触发
+    	// 依次触发等待时间序列
     	if($this->times < count($this->delays) - 1){
 			OrderNotify::dispatch($this->order_no, $this->times + 1);
 		}else{

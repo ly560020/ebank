@@ -13,10 +13,12 @@ let mix = require('laravel-mix');
 
 mix.js('resources/assets/js/app.js', 'js')
 	.sass('resources/assets/sass/app.scss', 'css')
-	.extract(['vue','vue-router','vue-datepicker-local','axios'])
+	// .extract(['vue','vue-router','vue-datepicker-local','axios'])
 	// .version()
 	// .sourceMaps()
 ;
+
+mix.disableNotifications();
 mix.setPublicPath('public/dist').setResourceRoot('/dist/');
 mix.webpackConfig({
 	output : {

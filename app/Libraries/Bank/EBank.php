@@ -32,12 +32,12 @@ use Illuminate\Validation\Rule;
 class EBank {
 	
 	/**
-	 * @param int $balance	// 久千万亿元
+	 * @param int $balance	// 玖十万亿元
 	 * @return bool
 	 * 初始化数据，数据清空后可调用此方法重新生成系统钱包id
 	 * 一层商户，一层
 	 */
-	public function initPurse(int $balance = 900000000000000000){
+	public function initPurse(int $balance = 9000000000000000){
 		$merchant = FundMerchant::active()->pluck('id');
 		$user_type = FundUserType::active()->pluck('id');
 		$merchant->each(function($merchant_id) use ($user_type,$balance){
@@ -297,33 +297,30 @@ class EBank {
 		
 		$transfer_id = DB::transaction(function() use ($merchant_id,$out_purse_id,$into_purse_id,$amount,$parent_id,$reason,$detail,$remarks){
 			// 2019-11-26 14:48:39 修改为原子锁，避免幻读
-			$out_purse = Cache::lock('EBank_transfer')->block(10, function() use ($out_purse_id){
+			
+			// 出账钱包扣款
+			$out_purse = Cache::lock('EBank@_transfer:'.$out_purse_id)->block(10, function() use ($out_purse_id, $amount){
+				$var = FundUserPurse::where(['id'=> $out_purse_id, 'status'=> 1])->where(DB::raw('balance - freeze'), '>=', $amount)->decrement('balance', $amount);
+				if(!$var){
+					exception('转出钱包扣款失败，余额不足或账户被禁用');
+				}
 				return FundUserPurse::find($out_purse_id);
 			});
 			if(empty($out_purse)){
 				exception('转出钱包查询超时');
 			}
-			$into_purse = Cache::lock('EBank_transfer')->block(10, function() use ($into_purse_id){
+			
+			$into_purse = Cache::lock('EBank@_transfer:'.$into_purse_id)->block(10, function() use ($into_purse_id, $amount){
+				// 进账钱包收款
+				$var = FundUserPurse::where(['id'=> $into_purse_id, 'status'=> 1])->increment('balance',$amount);
+				if(!$var){
+					exception('转入钱包加款失败，账户被禁用');
+				}
 				return FundUserPurse::find($into_purse_id);
 			});
 			if(empty($into_purse)){
 				exception('转入钱包查询超时');
 			}
-			
-			if($out_purse->status == 0){
-				exception('转出钱包已被设置为禁用');
-			}
-			if($into_purse->status == 0){
-				exception('转入钱包已被设置为禁用');
-			}
-			
-			// 出账钱包扣款
-			$var = FundUserPurse::where(['id'=>$out_purse->id])->where(DB::raw('balance - freeze'),'>=',$amount)->decrement('balance', $amount);
-			if(!$var){
-				exception('转出钱包扣款失败，余额不足');
-			}
-			// 进账钱包收款
-			FundUserPurse::where(['id'=>$into_purse->id])->increment('balance',$amount);
 			
 			// 增加流水
 			

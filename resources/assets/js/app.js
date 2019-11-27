@@ -15,7 +15,8 @@ import Vue from "vue"
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 import DatePicker from './components/DatePicker'
-Vue.component('pagination', require('./components/pagination.vue'));
+import Pagination from './components/Pagination'
+Vue.component('pagination', Pagination);
 Vue.component('datePicker',DatePicker);
 
 Vue.config.productionTip = false;
