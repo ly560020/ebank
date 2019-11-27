@@ -39,7 +39,12 @@
 					subtext: '按日划分，金额单位：分'
 				},
 				tooltip : {
-					trigger: 'axis'
+					trigger: 'axis',
+                    position: function (pos, params, el, elRect, size) {
+                        var obj = {top: 110};
+                        obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 30;
+                        return obj;
+                    },
 				},
 				legend: {
 					// type: 'scroll',

@@ -47,7 +47,7 @@ class SandboxController extends Controller
 //		$s = EBankSdk::transfer($transfer,true);	// 异步转账，无返回值
 		
 		// 单一转账，一条条转更方便，需求不复杂时使用
-//		$s = EBankSdk::transferAdd(3020110301)->from(1)->to(1)->amount(10)->transfer(true);
+		$s = EBankSdk::transferAdd(1010110301)->from(0)->to(1)->amount(1)->transfer(false);
 		/**
 		 * payType 方法可以多次调用，实现组合支付
 		 */

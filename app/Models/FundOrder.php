@@ -27,12 +27,15 @@ class FundOrder extends CommonModel
 		'wechat_stage'			=> '微信反扫',
 		'wechat_scan'			=> '微信正扫',
 		'wechat_mini'			=> '微信小程序',
+		'wechat_transfer'		=> '微信转账',
+		'wechat_redpack'		=> '微信红包',
 		
 		'alipay_app'			=> '支付宝APP',
 		'alipay_web'			=> '支付宝PC网页',
 		'alipay_wab'			=> '支付宝H5',
 		'alipay_stage'			=> '支付宝反扫',
 		'alipay_scan'			=> '支付宝正扫',
+		'alipay_transfer'		=> '支付宝转账',
 		// 更多支付方式自行扩展，[键]为 OrderController 对应里的方法名，[值]为需要展示的中文名称，如未指定中文则显示方法名
 	];
 	
