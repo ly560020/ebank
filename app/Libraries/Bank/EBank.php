@@ -13,6 +13,7 @@ use App\Models\FundTransfer;
 use App\Models\FundTransferReason;
 use App\Models\FundUserPurse;
 use App\Models\FundUserType;
+use Illuminate\Contracts\Cache\LockTimeoutException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -299,28 +300,52 @@ class EBank {
 			// 2019-11-26 14:48:39 修改为原子锁，避免幻读
 			
 			// 出账钱包扣款
-			$out_purse = Cache::lock('EBank@_transfer:'.$out_purse_id)->block(10, function() use ($out_purse_id, $amount){
-				$var = FundUserPurse::where(['id'=> $out_purse_id, 'status'=> 1])->where(DB::raw('balance - freeze'), '>=', $amount)->decrement('balance', $amount);
-				if(!$var){
-					exception('转出钱包扣款失败，余额不足或账户被禁用');
-				}
-				return FundUserPurse::find($out_purse_id);
-			});
-			if(empty($out_purse)){
+			$out_purse = null;
+			$out_lock = Cache::lock('EBank@_transfer:'.$out_purse_id);
+			try{
+				$out_purse = $out_lock->block(10, function() use ($out_purse_id, $amount){
+					$var = FundUserPurse::where(['id'=> $out_purse_id, 'status'=> 1])->where(DB::raw('balance - freeze'), '>=', $amount)->decrement('balance', $amount);
+					if(!$var){
+						return false;
+					}
+					return FundUserPurse::find($out_purse_id);
+				});
+				optional($out_lock)->release();
+			}catch (LockTimeoutException $e){
+				
+			}finally {
+				optional($out_lock)->release();
+			}
+			if(is_null($out_purse)){
 				exception('转出钱包查询超时');
 			}
+			if($out_purse === false){
+				exception('转出钱包扣款失败，余额不足或账户被禁用');
+			}
 			
-			$into_purse = Cache::lock('EBank@_transfer:'.$into_purse_id)->block(10, function() use ($into_purse_id, $amount){
-				// 进账钱包收款
-				$var = FundUserPurse::where(['id'=> $into_purse_id, 'status'=> 1])->increment('balance',$amount);
-				if(!$var){
-					exception('转入钱包加款失败，账户被禁用');
-				}
-				return FundUserPurse::find($into_purse_id);
-			});
-			if(empty($into_purse)){
+			$into_purse = null;
+			$into_lock = Cache::lock('EBank@_transfer:'.$into_purse_id);
+			try{
+				$into_purse = $into_lock->block(10, function() use ($into_purse_id, $amount){
+					$var = FundUserPurse::where(['id'=> $into_purse_id, 'status'=> 1])->increment('balance', $amount);
+					if(!$var){
+						return false;
+					}
+					return FundUserPurse::find($into_purse_id);
+				});
+				optional($into_lock)->release();
+			}catch (LockTimeoutException $e){
+				
+			}finally {
+				optional($into_lock)->release();
+			}
+			if(is_null($into_purse)){
 				exception('转入钱包查询超时');
 			}
+			if($into_purse === false){
+				exception('转入钱包加款失败，账户被禁用');
+			}
+			
 			
 			// 增加流水
 			
