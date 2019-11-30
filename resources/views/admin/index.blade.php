@@ -13,7 +13,7 @@
 	<link rel="stylesheet" href="{{mix('css/app.css', '/dist')}}" />
 	<title>EBank@电子银行--站内虚拟积分与聚合支付解决方案</title>
 </head>
-<body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-blue mdui-theme-accent-blue mdui-color-grey-100 mdui-loaded">
+<body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-blue mdui-theme-accent-blue mdui-loaded">
 <div id="app"></div>
 
 <script>

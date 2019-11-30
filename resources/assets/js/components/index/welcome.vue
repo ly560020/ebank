@@ -5,7 +5,7 @@
 			<i class="mdui-icon material-icons">visibility</i>
 			<span>今日实时数据统计</span>
 			<div class="mdui-toolbar-spacer"></div>
-			<a class="mdui-btn mdui-ripple mdui-btn-icon" @click="today">
+			<a :class="{'mdui-btn':true, 'mdui-ripple':true, 'mdui-btn-icon':true, 'mdui-btn-rotate': sum_today_loading}" @click="today">
 				<i class="mdui-icon material-icons">refresh</i>
 			</a>
 		</div>
@@ -59,7 +59,7 @@
 				<a class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">error_outline</i></a>
 				<span title="此数据为最新20条，详情请在订单管理中筛选查看，请及时处理">支付成功但未成功通知商户订单</span>
 				<div class="mdui-toolbar-spacer"></div>
-				<a class="mdui-btn mdui-ripple mdui-btn-icon" @click="order_unnotify">
+				<a :class="{'mdui-btn':true, 'mdui-ripple':true, 'mdui-btn-icon': true, 'mdui-btn-rotate': order_notify_loading}" @click="order_unnotify">
 					<i class="mdui-icon material-icons">refresh</i>
 				</a>
 			</div>
@@ -103,6 +103,8 @@
 	export default {
 		data(){
 			return {
+			    sum_today_loading: false,
+                order_notify_loading: false,
 				sum_today : {
 					today_unified_count : {
 						"name": "支付订单数量",
@@ -188,7 +190,7 @@
 						"title": "商户API未成功返回",
 						"backgroundColor": "#D9534F"
 					},
-		},
+				},
 				sum_yesterday : {
 					yesterday_unified_count : {
 						"name": "支付订单数量",
@@ -279,50 +281,61 @@
 			}
 		},
 		methods : {
-			order_unnotify(){
-				let t = this;
-				t.$API.get('/index/order_unnotify').then(function(data){
-					t.order_notify = data;
-				}).catch(function(msg){
+			async order_unnotify(){
+				let t = this, time = (new Date()).getTime();
+                t.order_notify_loading = true;
+                try {
+                    t.order_notify= await t.$API.get('/index/order_unnotify');
+                }catch (e) {
 					
-				});
+                }
+                let time_api = (new Date()).getTime() - time; 
+                setTimeout(()=> {
+                    t.order_notify_loading = false;
+                }, Math.max(0,1000 - time_api));
 			},
-			today(){
-				let t = this;
-				t.$API.get('/index/sum_today').then(function(data){
-					for(let i in t.sum_today){
-						t.sum_today[i].sum = data[i].sum;
-					}
-				}).catch(function(msg){
-					
-				});
+			async today(){
+				let t = this, time = (new Date()).getTime();;
+				t.sum_today_loading = true;
+				try{
+                    let data = await t.$API.get('/index/sum_today');
+                    for(let i in t.sum_today){
+                        t.sum_today[i].sum = data[i].sum;
+                    }
+				}catch (e) {
+				    
+                }
+                let time_api = (new Date()).getTime() - time;
+                setTimeout(()=> {
+                    t.sum_today_loading = false;
+				}, Math.max(0,1000 - time_api));
 			},
-			yesterday(){
+			async yesterday(){
 				let t = this;
-				t.$API.get('/index/sum_yesterday').then(function(data){
-					for(let i in t.sum_yesterday){
-						t.sum_yesterday[i].sum = data[i].sum;
-					}
-				}).catch(function(msg){
-					
-				});
+				let data = await t.$API.get('/index/sum_yesterday');
+				for(let i in t.sum_yesterday){
+					t.sum_yesterday[i].sum = data[i].sum;
+				}
 			},
 			notify(id) {
 				let t = this;
 				mdui.confirm('请求重新进入通知队列，如果多次失败请检查通知地址，点击【确定】继续', '手动发起异步通知', function () {
 					t.$API.post('/order/notify', {id: id}).then(function (data) {
 						mdui.alert("已重新分发通知任务", function () {}, {history: false});
-						t.order_unnotify();
 					}).catch(function(msg){
 						
 					});
 				}, function () {}, {history: false, confirmText: '确定', cancelText: '取消'});
 			},
 		},
-		mounted(){
-			this.today();
-			this.yesterday();
-			this.order_unnotify();
+		async mounted(){
+            await this.yesterday();
+			await this.today();
+            await this.order_unnotify();
+			// 每3秒刷新任务
+			setInterval(async ()=> {
+			    await this.order_unnotify();
+			}, 3000);
 		},
 		components: {
 			NumberGrow

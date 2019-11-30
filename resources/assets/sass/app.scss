@@ -9,6 +9,7 @@
 //@import "~bootstrap-sass/assets/stylesheets/bootstrap";
 @import "mdui.min.css";
 @import "pagination.css";
+@import "animation";
 
 #app {
 	padding-bottom:7rem;
@@ -47,6 +48,12 @@
 .mdui-list-item-actived {
 	font-weight: 700;
 	//background-color: rgba(0,0,0,.08);
+}
+.mdui-btn-rotate {
+	-webkit-animation: rotate 1s infinite linear ;
+	-webkit-transform-origin: center center;
+	-ms-transform-origin: center center;
+	transform-origin: center center;
 }
 
 /* 重绘部分结束------------  */

@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<header class="mdui-appbar mdui-appbar-fixed">
+		<header :class="{'mdui-appbar': true, 'mdui-appbar-fixed': true, 'mdui-hidden-xl-down': !user.id}">
 			<div class="mdui-toolbar mdui-color-theme">
-				<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer', swipe: true}"><i class="mdui-icon material-icons">menu</i></span>
+				<span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" @click="drawer_toggle"><i class="mdui-icon material-icons">menu</i></span>
 				<router-link :to="{path:'/'}" class="mdui-typo-headline">{{PROJECT_NAME}}</router-link>
 				<div class="mdui-toolbar-spacer"></div>
 				<span class="mdui-btn mdui-ripple" mdui-menu="{target: '.menu_user'}">
@@ -54,8 +54,13 @@
 					注销
 				</a>
 			</div>
+			
+			<!--进度条，用于加载提示-->
+			<div class="mdui-progress">
+				<div class="mdui-progress-indeterminate mdui-hidden ajax_loading"></div>
+			</div>
 		</header>
-		<div class="mdui-drawer mdui-color-white" id="main-drawer">
+		<div class="mdui-drawer mdui-color-white mdui-drawer-close}" id="main-drawer">
 			<div class="mdui-card">
 				<div class="mdui-card-media">
 					<img src="../images/snow_square_tiny.png" style="height:200px;" />
@@ -87,11 +92,6 @@
 					</ul>
 				</div>
 			</div>
-		</div>
-		
-		<!--进度条，用于加载提示-->
-		<div class="mdui-progress">
-			<div class="mdui-progress-indeterminate mdui-hidden ajax_loading"></div>
 		</div>
 		<!--<div class="mdui-container">-->
 		<div class="mdui-p-a-3">
@@ -133,6 +133,7 @@
 	</div>
 </template>
 <script>
+	import FloagingCogsSvg from '../images/floating-cogs.svg';
 	export default {
 		data(){
 			return {
@@ -141,6 +142,7 @@
 				user : '',
 				menu : '',
 				menu_index : 0,
+                drawer: '',
 				password_reset_dialog : '',
 				password_reset : {
 					password_old : '',
@@ -174,20 +176,33 @@
 				
 				})
 			},
-			init(){
+			drawer_toggle(flag = undefined){
+			    switch (flag) {
+					case true:
+					    this.drawer.open();
+					    break;
+					case false:
+					    this.drawer.close();
+					    break;
+					default:
+					    this.drawer.toggle();
+                }
+			},
+			async init(){
 				let t = this;
-				t.$API.get('/init').then(function(data){
-					t.user = data.user;
-					t.menu = data.menu;
-					t.menu_active();
-				}).catch(function(){
-				
-				});
+				let data = await t.$API.get('/init');
+				t.user = data.user;
+				t.menu = data.menu;
+				t.menu_active();
+                t.drawer_toggle(true);
+                document.body.style.backgroundImage = '';
 			},
 			initClear(){
 				let t = this;
 				t.menu = '';
 				t.user = '';
+				t.drawer_toggle(false);
+                document.body.style.backgroundImage = "url("+FloagingCogsSvg+")";
 			},
 			logout(){
 				let t = this;
@@ -201,6 +216,7 @@
 		},
 		mounted(){
 			let t = this;
+            t.drawer = new mdui.Drawer('#main-drawer', {swipe: true});
 			t.password_reset_dialog = new mdui.Dialog('.password_reset_dialog',{history:false});
 			t.init();
 		}
