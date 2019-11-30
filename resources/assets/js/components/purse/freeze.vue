@@ -34,7 +34,7 @@
 					<td v-text="'#'+(key+1)"></td>
 					<td v-text="val.id"></td>
 					<td v-text="val.purse_id"></td>
-					<td v-text="val.amount"></td>
+					<td class="mdui-text-color-red" v-text="val.amount"></td>
 					<td v-text="status[val.status]"></td>
 					<td v-text="val.remarks"></td>
 					<td v-text="val.created_at"></td>

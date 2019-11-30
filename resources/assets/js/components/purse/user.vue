@@ -57,7 +57,7 @@
 					<td v-text="val.user_id"></td>
 					<td v-text="user_type[val.user_type_id]"></td>
 					<td v-text="purse_type[val.purse_type_id]"></td>
-					<td v-text="val.balance"></td>
+					<td class="mdui-text-color-red" v-text="val.balance"></td>
 					<td v-text="val.freeze"></td>
 					<td v-text="val.balance - val.freeze"></td>
 					<td v-text="val.status ? '启用' : '禁用'"></td>

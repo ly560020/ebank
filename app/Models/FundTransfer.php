@@ -11,6 +11,12 @@ class FundTransfer extends CommonModel
     //
 	protected $table = 'fund_transfer';
 	
+	protected $casts = [
+		'amount'		=> 'integer',
+		'out_balance'	=> 'integer',
+		'into_balance'	=> 'integer',
+	];
+	
 	public function scopeActive($query){
 		return $query->where(['status'=>1]);
 	}

@@ -47,7 +47,7 @@ class SandboxController extends Controller
 //		$s = EBankSdk::transfer($transfer,true);	// 异步转账，无返回值
 		
 		// 单一转账，一条条转更方便，需求不复杂时使用
-		$s = EBankSdk::transferAdd(1010110301)->from(0)->to(1)->amount(1)->transfer(false);
+//		$s = EBankSdk::transferAdd(1010110301)->from(0)->to(1)->amount(1)->transfer(false);
 		/**
 		 * payType 方法可以多次调用，实现组合支付
 		 */
@@ -83,6 +83,9 @@ class SandboxController extends Controller
 	
 	
 	public function index(BasicRequest $request){
+		if(config('basic.production')){
+			return abort(404);
+		}
 		$merchant = FundMerchant::where(['status'=>1])->pluck('name','appid');
 		return view('sandbox',['merchant'=>$merchant]);
 	}

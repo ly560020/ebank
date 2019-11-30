@@ -85,9 +85,9 @@ Mysql5.7+ / MariaDB
 
 **github**
 
-[github](https://github.com/yybawang/laravel-ebank "github")
+[github](https://github.com/yybawang/ebank "github")
 
-**码云**
+**码云(不保证及时更新)**
 
 [码云](https://gitee.com/yybawang/ebank "码云")
 
@@ -97,7 +97,7 @@ Mysql5.7+ / MariaDB
 
 ## 安装
 
-> 因项目中涉及大金额运算(万亿以上，未使用 bcmath)，需使用 php >= 7.1.12，推荐学习并使用 docker + laradock 搭建开发环境，避免 php 计算整数长度变为 2147483647 问题
+> 如果你是Windows环境，因项目中涉及大金额运算(万亿以上，未使用 bcmath)，需使用 php >= 7.1.12，推荐学习并使用 docker + laradock 搭建开发环境，避免 php 计算整数长度变为 2147483647 问题，Mac/Linux 平台无此问题
 
 [laradock 搭建开发、测试、生产环境](https://github.com/laradock/laradock "laradock")
 
@@ -149,7 +149,6 @@ CREATE SCHEMA `ebank` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 - [ ] 流水关联重新设计
 - [ ] 后台功能点帮助文案
 - [x] 对接 hhxsv5/laravel-s 可选常驻内存式部署（php bin/laravels start 运行，也可使用 supervisor 维护进程([文档](https://github.com/hhxsv5/laravel-s#run))），只托管WEB服务，队列还是使用 supervisor
-- [ ] 报表统计动态筛选，选择下拉生成对应sql，形成数据统计
 
 ## Q && A
 
@@ -157,9 +156,6 @@ CREATE SCHEMA `ebank` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 > - A1: 项目并未使用 bcmath 扩展，7.1.12 以上的 linux PHP 已直接支持大金额加减乘除等运算，windows 环境 PHP 任何版本还是不能直接大金额运算，所以 windows 下推荐使用 docker for windows + laradock 安装开发环境，避免大金额运算问题，当然服务器也可以使用 docker + laradock 搭建相同的生产环境 
 
-> - Q2: 缺少统计报表，很多都没做数据统计
-
-> - A2: 基本的报表数据统计其实都可在对应主页面上进行筛选得到类似报表的功能，比如某用户今天下了多少单，某用户今天待提现数据等等，此类需求已加入开发计划
 
 ## Example
 

@@ -68,21 +68,26 @@ class Handler extends ExceptionHandler
 			email_bug($exception->__toString());
 		}
 		
-		if($exception instanceof ValidationException){
-			$message = $exception->validator->errors()->first();
-		}elseif($exception instanceof NotFoundHttpException){
-			$message = $request->getPathInfo().' 404 Not Found';
-		}elseif($exception instanceof QueryException){
-			$production = config('basic.production');
-			$message = $production ? '数据参数错误，请稍后重试' : (string)$exception->getMessage();
-		}elseif($exception instanceof ModelNotFoundException){
-			$production = config('basic.production');
-			$message = $production ? '查询数据不存在' : $exception->getMessage();
-		}elseif($exception instanceof MaintenanceModeException){
-			$message = '服务器维护中，请稍后~';
+    	if($exception instanceof LoginException){
+    		$message = $exception->getMessage();
+			return response()->json(json_login($message),200,['Content-type'=>'Application/json']);
 		}else{
-			$message = $exception->getMessage();
+			if($exception instanceof ValidationException){
+				$message = $exception->validator->errors()->first();
+			}elseif($exception instanceof NotFoundHttpException){
+				$message = $request->getPathInfo().' 404 Not Found';
+			}elseif($exception instanceof QueryException){
+				$production = config('basic.production');
+				$message = $production ? '数据参数错误，请稍后重试' : (string)$exception->getMessage();
+			}elseif($exception instanceof ModelNotFoundException){
+				$production = config('basic.production');
+				$message = $production ? '查询数据不存在' : $exception->getMessage();
+			}elseif($exception instanceof MaintenanceModeException){
+				$message = '服务器维护中，请稍后~';
+			}else{
+				$message = $exception->getMessage();
+			}
+			return response()->json(json_error($message),200,['Content-type'=>'Application/json']);
 		}
-		return response()->json(json_error($message),200,['Content-type'=>'Application/json']);
     }
 }

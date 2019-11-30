@@ -38,6 +38,9 @@ axios.interceptors.response.use(function (response){
 		}else if('0' === data.status){
 			Vue.prototype.tips(data.message);
 			return Promise.reject(data.message);
+		}else if('2' === data.status){
+			router.push({path:'/login'});
+			return Promise.reject('Need Login');
 		}else{
 			Vue.prototype.tips('失败，未正常接收 json');
 			return Promise.reject('失败，未正常接收 json');

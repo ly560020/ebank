@@ -303,8 +303,9 @@ class EBank {
 			$out_purse = null;
 			$out_lock = Cache::lock('EBank@_transfer:'.$out_purse_id);
 			try{
-				$out_purse = $out_lock->block(10, function() use ($out_purse_id, $amount){
+				$out_purse = $out_lock->block(50, function() use ($out_purse_id, $amount){
 					$var = FundUserPurse::where(['id'=> $out_purse_id, 'status'=> 1])->where(DB::raw('balance - freeze'), '>=', $amount)->decrement('balance', $amount);
+					// 未修改返回修改行数为0
 					if(!$var){
 						return false;
 					}
@@ -326,7 +327,7 @@ class EBank {
 			$into_purse = null;
 			$into_lock = Cache::lock('EBank@_transfer:'.$into_purse_id);
 			try{
-				$into_purse = $into_lock->block(10, function() use ($into_purse_id, $amount){
+				$into_purse = $into_lock->block(50, function() use ($into_purse_id, $amount){
 					$var = FundUserPurse::where(['id'=> $into_purse_id, 'status'=> 1])->increment('balance', $amount);
 					if(!$var){
 						return false;
@@ -358,13 +359,13 @@ class EBank {
 				'out_user_type_id'	=> $out_purse->user_type_id,
 				'out_purse_type_id'	=> $out_purse->purse_type_id,
 				'out_purse_id'		=> $out_purse->id,
-				'out_balance'		=> $out_purse->balance - $amount,
+				'out_balance'		=> $out_purse->balance,
 				
 				'into_user_id'		=> $into_purse->user_id,
 				'into_user_type_id'	=> $into_purse->user_type_id,
 				'into_purse_type_id'=> $into_purse->purse_type_id,
 				'into_purse_id'		=> $into_purse->id,
-				'into_balance'		=> $into_purse->balance + $amount,
+				'into_balance'		=> $into_purse->balance,
 				
 				'parent_id'			=> $parent_id,
 				'detail'			=> $detail,

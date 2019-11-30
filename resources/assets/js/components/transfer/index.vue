@@ -71,7 +71,7 @@
 						<td v-text="val.id"></td>
 						<td v-text="val.reason"></td>
 						<td v-text="reason[val.reason]"></td>
-						<td v-text="val.amount"></td>
+						<td class="mdui-text-color-red" v-text="val.amount"></td>
 						
 						<!--<td v-text="val.parent_id"></td>-->
 						<!--<td v-text="val.detail"></td>-->
@@ -92,7 +92,7 @@
 						<td class="mdui-text-color-deep-orange" v-text="user_type[val.out_user_type_id]"></td>
 						<td class="mdui-text-color-deep-orange" v-text="purse_type[val.out_purse_type_id]"></td>
 						<td class="mdui-text-color-deep-orange">钱包ID：<span v-text="val.out_purse_id"></span></td>
-						<td class="mdui-text-color-deep-orange" colspan="3">出账后余额(原)：<span v-text="val.out_balance"></span>(<span v-text="'+'+val.amount"></span>)</td>
+						<td class="mdui-text-color-deep-orange" colspan="3"><span :mdui-tooltip="tips('原记录余额: '+(val.out_balance + val.amount))">出账后余额：<span v-text="val.out_balance"></span></span></td>
 					</tr>
 					<tr v-show="val.more">
 						<td class="mdui-text-color-teal"></td>
@@ -101,7 +101,7 @@
 						<td class="mdui-text-color-teal" v-text="user_type[val.into_user_type_id]"></td>
 						<td class="mdui-text-color-teal" v-text="purse_type[val.into_purse_type_id]"></td>
 						<td class="mdui-text-color-teal">钱包ID：<span v-text="val.into_purse_id"></span></td>
-						<td class="mdui-text-color-teal" colspan="3">进账后余额(原)：<span v-text="val.into_balance"></span>(<span v-text="'-'+val.amount"></span>)</td>
+						<td class="mdui-text-color-teal" colspan="3"><span :mdui-tooltip="tips('原记录余额: '+(val.into_balance - val.amount))">进账后余额：<span v-text="val.into_balance"></span></span></td>
 					</tr>
 				</template>
 				</tbody>
@@ -176,6 +176,9 @@
 				this.keyword.merchant_id = id;
 				this.init();
 			},
+            tips(content){
+                return "{content: '"+content+"', position: 'top'}"
+            },
 			init(){
 				let t = this;
 				t.$API.get('/transfer/index',t.keyword).then(function(data){

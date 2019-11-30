@@ -21,7 +21,15 @@ class MerchantSign
      */
     public function handle($request, Closure $next)
     {
-		$param = $request->except(['s']);
+    	// 判断有没有缓存是否设置成 redis，否则不能使用
+		$allow = [
+			'memcached', 'redis'
+		];
+		if(!in_array(config('cache.default'), $allow)){
+			exception('需将 CACHE_DRIVER 设置成 redis/memcached 以保证数据并发正确性');
+		}
+		
+		$param = $request->all();
 		
 		clear_null($param);
 		
