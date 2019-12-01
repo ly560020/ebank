@@ -57,7 +57,7 @@
 			</blockquote>
 			<blockquote class="blockquote_normal">
 				支付金额统计(分)
-				<p style="line-height:25px;"><span class="mdui-m-r-3" v-for="(amount,type) of amount_sum">{{payments[type] || type}}：{{amount}}</span></p>
+				<p style="line-height:25px;"><span class="mdui-m-r-3" v-for="(amount,type) of amount_sum">{{payments[type] || type}}：<span style="color:#FE0016;">{{amount}}</span></span></p>
 			</blockquote>
 		</div>
 		<div class="mdui-table-fluid">
@@ -100,9 +100,9 @@
 						<td>退款状态：<strong><span v-if="val.refund_status" class=mdui-text-color-red-500>已退款</span><span v-else class=mdui-text-color-grey>未退款</span></strong></td>
 						<td>退款时间：<span v-text="val.refund_time"></span></td>
 						<td>
-							<a class="mdui-btn mdui-ripple mdui-color-blue-grey" v-if="val.status == 1 && val.pay_status == 0" @click="complete(val.id)">掉单补回</a>
-							<a class="mdui-btn mdui-ripple mdui-color-theme" v-if="val.status == 1 && val.pay_status == 1 && val.refund_status == 0" @click="notify(val.id)">手动通知</a>
-							<a class="mdui-btn mdui-ripple mdui-color-red" v-if="val.status == 1 && val.pay_status == 1 && val.refund_status == 0" @click="refund(val.id,val.amount)">订单退款</a>
+							<a class="mdui-btn mdui-ripple mdui-color-blue-grey" v-if="val.status === 1 && val.pay_status === 0" @click="complete(val.id)">掉单补回</a>
+							<a class="mdui-btn mdui-ripple mdui-color-theme" v-if="val.status === 1 && val.pay_status === 1 && val.refund_status === 0" @click="notify(val.id)">手动通知</a>
+							<a class="mdui-btn mdui-ripple mdui-color-red" v-if="val.status === 1 && val.pay_status === 1 && val.refund_status === 0" @click="refund(val.id,val.amount)">订单退款</a>
 						</td>
 					</tr>
 					</tbody>
@@ -200,14 +200,12 @@
 			},
 			refund(id,amount) {
 				let t = this;
-				mdui.prompt('退款金额会返还到下单用户的现金钱包余额中，请在下方输入【退款金额】。注意：输入单位为分', '订单总金额(分)：'+amount, function (value) {
+				mdui.prompt('退款金额会返还到下单用户的现金钱包余额中，请在下方输入【退款金额】。注意：输入单位为分', '订单总金额(分)：'+amount, async (value) => {
 					if(value){
-						t.$API.post('/order/refund', {id: id,amount:value}).then(function (data) {
-							mdui.alert("退款成功，已完成系统到用户的转账操作，如产生奖励部分需手动冲正", function () {}, {history: false});
-							t.init();
-						}).catch(function(msg){
-							
-						});
+						await t.$API.post('/order/refund', {id: id,amount:value});
+						mdui.alert("退款成功，已完成系统到用户的转账操作，如产生奖励部分需手动冲正", function () {}, {history: false});
+						t.init();
+						
 					}
 				}, function () {}, {history: false, confirmText: '确定', cancelText: '取消'});
 			},

@@ -2,10 +2,10 @@
 	<div class="login">
 		<div class="frame">
 			<div class="mdui-card">
-				<div class="mdui-card-header">
+				<div class="mdui-card-header mdui-color-theme">
 					<img class="mdui-card-header-avatar" src="../../images/doller-tag.png"/>
 					<div class="mdui-card-header-title" v-text="PROJECT_NAME"></div>
-					<div class="mdui-card-header-subtitle">后台开发管理系统</div>
+					<div class="mdui-card-header-subtitle">系统管理后台</div>
 				</div>
 				<div class="mdui-card-content">
 					<div class="content">

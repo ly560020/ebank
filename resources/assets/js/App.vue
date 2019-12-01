@@ -81,7 +81,7 @@
 				</div>
 			</div>
 			<div class="mdui-list" mdui-collapse="{accordion: true}">
-				<div v-for="(val,key,index) in menu" :class="{'mdui-collapse-item':true,'mdui-collapse-item-open':index == menu_index ? true :false}">
+				<div v-for="(val,key,index) in menu" :class="{'mdui-collapse-item':true,'mdui-collapse-item-open':index === menu_index}">
 					<div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
 						<i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-grey">menu</i>
 						<div class="mdui-list-item-content" v-text="key"></div>
@@ -168,10 +168,11 @@
 				let t = this;
 				t.$API.post('/rule/password_reset',this.password_reset).then(function(data){
 					t.password_reset_dialog.close();
-					mdui.alert('已成功修改，下次登录请使用新密码','修改登录密码完成',function(){},{history:false})
 					for(let i in t.password_reset){
 						t.password_reset[i] = '';
 					}
+                    // mdui.alert('已成功修改，下次登录请使用新密码','修改登录密码完成',function(){},{history:false})
+					t.logout();
 				}).catch(function(){
 				
 				})
@@ -206,7 +207,7 @@
 			},
 			logout(){
 				let t = this;
-				t.tips('即将跳转到登录页');
+				t.tips('请重新登录');
 				t.$API.post('/logout').then(function(data){
 					t.$router.push({path:'/login'});
 				}).catch(function(){

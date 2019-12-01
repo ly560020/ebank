@@ -282,21 +282,23 @@
 		},
 		methods : {
 			async order_unnotify(){
-				let t = this, time = (new Date()).getTime();
+				let t = this;
                 t.order_notify_loading = true;
+                setTimeout(()=> {
+                    t.order_notify_loading = false;
+                }, 1000);
                 try {
                     t.order_notify= await t.$API.get('/index/order_unnotify');
                 }catch (e) {
 					
                 }
-                let time_api = (new Date()).getTime() - time; 
-                setTimeout(()=> {
-                    t.order_notify_loading = false;
-                }, Math.max(0,1000 - time_api));
 			},
 			async today(){
-				let t = this, time = (new Date()).getTime();;
+				let t = this;
 				t.sum_today_loading = true;
+                setTimeout(()=> {
+                    t.sum_today_loading = false;
+                }, 1000);
 				try{
                     let data = await t.$API.get('/index/sum_today');
                     for(let i in t.sum_today){
@@ -305,10 +307,6 @@
 				}catch (e) {
 				    
                 }
-                let time_api = (new Date()).getTime() - time;
-                setTimeout(()=> {
-                    t.sum_today_loading = false;
-				}, Math.max(0,1000 - time_api));
 			},
 			async yesterday(){
 				let t = this;
@@ -321,7 +319,10 @@
 				let t = this;
 				mdui.confirm('请求重新进入通知队列，如果多次失败请检查通知地址，点击【确定】继续', '手动发起异步通知', function () {
 					t.$API.post('/order/notify', {id: id}).then(function (data) {
-						mdui.alert("已重新分发通知任务", function () {}, {history: false});
+						mdui.alert("已重新分发通知任务，稍后会刷新此列表", function () {}, {history: false});
+                        setTimeout(async ()=> {
+                            await this.order_unnotify();
+                        }, 3000);
 					}).catch(function(msg){
 						
 					});
@@ -332,10 +333,6 @@
             await this.yesterday();
 			await this.today();
             await this.order_unnotify();
-			// 每3秒刷新任务
-			setInterval(async ()=> {
-			    await this.order_unnotify();
-			}, 3000);
 		},
 		components: {
 			NumberGrow
