@@ -117,9 +117,14 @@ class EBankSdk {
         foreach($transfer_objs as $obj){
             $param = $obj->param;
             // 过滤金额，金额小于0，就不能调转账，金额错误
-//            if($param['amount'] > 0){
+            if($param['amount'] > 0){
                 array_push($alias,$param);
-//            }
+            }
+        }
+        
+        // 如果没有需要转账的，返回0即可，类似mysql返回更新条数为0
+        if(empty($alias)){
+            return 0;
         }
 
         $param = [
