@@ -124,7 +124,7 @@ class EBankSdk {
         
         // 如果没有需要转账的，返回0即可，类似mysql返回更新条数为0
         if(empty($alias)){
-            return 0;
+            return [0];
         }
 
         $param = [
