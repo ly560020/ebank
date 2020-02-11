@@ -512,7 +512,6 @@ class Wallet {
 
     public function __construct(int $user_id = 0) {
         $this->user_id = $user_id;
-        return $this;
     }
 
     public function purse(string $purse){
