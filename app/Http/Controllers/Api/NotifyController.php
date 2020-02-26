@@ -21,8 +21,8 @@ class NotifyController extends CommonController {
 	public function wechat(BasicRequest $request){
 		// 验签成功后会返回所有参数collect，失败抛出异常
 		$post = Pay::wechat()->verify();
-		$order_no = $post->out_trade_no;
-		$amount = $post->total_fee;		// 微信支付单位分
+		$order_no = $post['out_trade_no'];
+		$amount = $post['total_fee'];		// 微信支付单位分
 		$status = $this->complete($order_no,$amount,$post);
 		if(!$status){
 			logger('['.$order_no.']微信支付内部处理分账失败');
@@ -38,8 +38,8 @@ class NotifyController extends CommonController {
 	public function alipay(BasicRequest $request){
 		// 验签成功后会返回所有参数collect，失败抛出异常
 		$post = Pay::alipay()->verify();
-		$order_no = $post->out_trade_no;
-		$amount = intval($post->total_amount * 100);	// 单位元
+		$order_no = $post['out_trade_no'];
+		$amount = intval($post['total_amount'] * 100);	// 单位元
 		$status = $this->complete($order_no,$amount,$post);
 		// 支付宝支付回调，成功输出 SUCCESS
 		if(!$status){

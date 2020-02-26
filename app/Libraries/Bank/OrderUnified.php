@@ -303,7 +303,7 @@ class OrderUnified {
 	 * @param int $amount
 	 * @param string $product_name
 	 * @param string $buyer_id
-	 * @return \Yansongda\Pay\Gateways\Alipay\ScanGateway
+	 * @return \Yansongda\Pay\Gateways\Alipay\MiniGateway
 	 */
 	public function alipayMini(string $order_no,int $amount,string $product_name, string $buyer_id){
 		$param = [
